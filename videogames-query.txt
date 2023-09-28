@@ -229,18 +229,43 @@ FROM software_houses sh
 	)
 -------------------
 11)
-SELECT v.id, v.name, v.release_date, COUNT(r.videogame_id) AS reviews_counter
+SELECT v.id, v.name, v.release_date, COUNT(*) AS reviews_counter
 FROM videogames v
 	JOIN reviews r 
 		ON v.id = r.videogame_id
 GROUP BY v.id
-HAVING COUNT(r.videogame_id) = (
+HAVING COUNT(*) = (
     SELECT MAX(reviews_counter)
     FROM (
         SELECT COUNT(*) AS reviews_counter
         FROM reviews
         GROUP BY videogame_id
     ) AS max_reviews
+);
+-------------------
+12)
+SELECT sh.id, sh.name, COUNT(*) AS 'award_counter'
+FROM software_houses sh 
+	JOIN videogames v 
+		ON sh.id = v.software_house_id 
+	JOIN award_videogame av 
+		ON v.id = av.videogame_id
+WHERE av.`year` >= 2015 
+	AND av.`year` <= 2016
+GROUP BY sh.id
+HAVING COUNT(*) = (
+    SELECT MAX(award_counter)
+    FROM (
+        SELECT sh.id AS software_house_id, COUNT(*) AS award_counter
+        FROM software_houses sh
+    	JOIN videogames v 
+    		ON sh.id = v.software_house_id
+    	JOIN award_videogame av 
+    		ON v.id = av.videogame_id
+        WHERE av.`year` >= 2015 
+        	AND av.`year` <= 2016
+        GROUP BY sh.id
+    ) AS max_awards
 );
 
 
