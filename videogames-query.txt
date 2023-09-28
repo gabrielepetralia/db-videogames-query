@@ -154,6 +154,95 @@ FROM software_houses sh
 ORDER BY sh.name;
 ------------------
 6)
+SELECT DISTINCT v.name AS 'videogame', pl.name AS 'pegi-label', c.name AS 'category', r.rating  AS 'rating'
+FROM reviews r
+	JOIN videogames v 
+		ON r.videogame_id = v.id 
+	JOIN category_videogame cv 
+		ON v.id = cv.videogame_id 
+	JOIN categories c 
+		ON cv.category_id = c.id 
+	JOIN pegi_label_videogame plv 
+		ON v.id = plv.videogame_id 
+	JOIN pegi_labels pl 
+		ON plv.pegi_label_id = pl.id
+WHERE r.rating > 4;
+(3013 anzichè 3363)
+------------------
+7)
+SELECT DISTINCT v.name
+FROM players p 
+	JOIN player_tournament pt 
+		ON p.id = pt.player_id 
+	JOIN tournaments t 
+		ON pt.tournament_id = t.id 
+	JOIN tournament_videogame tv 
+		ON t.id = tv.tournament_id 
+	JOIN videogames v 
+		ON tv.videogame_id = v.id
+WHERE p.name LIKE 's%';
+(473 anzichè 474)
+------------------
+8)
+SELECT t.city
+FROM awards a
+	JOIN award_videogame av 
+		ON a.id = av.award_id 
+	JOIN videogames v 
+		ON av.videogame_id = v.id 
+	JOIN tournament_videogame tv 
+		ON v.id = tv.videogame_id 
+	JOIN tournaments t 
+		ON tv.tournament_id = t.id 
+WHERE a.name LIKE "Gioco dell'anno"
+	AND av.`year` = 2018
+------------------
+9)
+SELECT p.name, p.lastname 
+FROM awards a
+	JOIN award_videogame av 
+		ON a.id = av.award_id 
+	JOIN videogames v 
+		ON av.videogame_id = v.id 
+	JOIN tournament_videogame tv 
+		ON v.id = tv.videogame_id 
+	JOIN tournaments t 
+		ON tv.tournament_id = t.id 
+	JOIN player_tournament pt 
+		ON t.id = pt.tournament_id 
+	JOIN players p 
+		ON pt.player_id = p.id
+WHERE a.name LIKE 'Gioco più atteso'
+	AND av.`year` = 2018
+	AND t.`year` = 2019
+------------------
+BONUS
+-------------------
+10)
+SELECT DISTINCT sh.name AS 'software house', v.name AS 'videogame', v.release_date 
+FROM software_houses sh 
+	JOIN videogames v 
+		ON sh.id = v.software_house_id 
+	WHERE sh.id = 5
+		AND v.release_date = (
+		SELECT MIN(release_date)
+		FROM videogames 
+	)
+-------------------
+11)
+SELECT v.id, v.name, v.release_date, COUNT(r.videogame_id) AS reviews_counter
+FROM videogames v
+	JOIN reviews r 
+		ON v.id = r.videogame_id
+GROUP BY v.id
+HAVING COUNT(r.videogame_id) = (
+    SELECT MAX(reviews_counter)
+    FROM (
+        SELECT COUNT(*) AS reviews_counter
+        FROM reviews
+        GROUP BY videogame_id
+    ) AS max_reviews
+);
 
 
 
