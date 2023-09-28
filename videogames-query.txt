@@ -154,7 +154,7 @@ FROM software_houses sh
 ORDER BY sh.name;
 ------------------
 6)
-SELECT DISTINCT v.name AS 'videogame', pl.name AS 'pegi-label', c.name AS 'category', r.rating  AS 'rating'
+SELECT DISTINCT v.name AS 'videogame', pl.name AS 'pegi-label', c.name AS 'category'
 FROM reviews r
 	JOIN videogames v 
 		ON r.videogame_id = v.id 
@@ -166,8 +166,7 @@ FROM reviews r
 		ON v.id = plv.videogame_id 
 	JOIN pegi_labels pl 
 		ON plv.pegi_label_id = pl.id
-WHERE r.rating > 4;
-(3013 anzichè 3363)
+WHERE r.rating >= 4;
 ------------------
 7)
 SELECT DISTINCT v.name
