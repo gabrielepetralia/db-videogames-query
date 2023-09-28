@@ -60,7 +60,7 @@ WHERE rating = 5;
 BONUS
 -------------------
 11)
-SELECT COUNT(*)
+SELECT COUNT(*), AVG(rating)
 FROM reviews
 WHERE videogame_id = 412;
 -------------------
